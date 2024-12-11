@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crono</title>
+    <style>
+        /*https://www.onlinewebfonts.com/download/84cb021d5f9af287ffff84b61beef6dc*/
+        @font-face {
+            font-family: 'clockicons';
+            src: url('clockicons.ttf') format('truetype');
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'clockicons', Arial, sans-serif;
+            cursor: pointer;
+            background: #1e1e2f;
+        }
+
+        #chrono {
+            font-size: 5rem;
+            user-select: none;
+            color: #eee;
+        }
+    </style>
+</head>
+<body>
+<div id="chrono">00:00:00.000</div>
+
+<script>
+    let startTime = 0;
+    let elapsedTime = 0;
+    let interval = null;
+    let isRunning = false;
+    let holdTimeout = null;
+    let isReset = false;
+
+    const chronoDisplay = document.getElementById("chrono");
+
+    // Format time to HH:MM:SS.mmm
+    function formatTime(ms) {
+        const totalSeconds = Math.floor(ms / 1000);
+        const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+        const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+        const seconds = String(totalSeconds % 60).padStart(2, "0");
+        const milliseconds = String(ms % 1000).padStart(3, "0");
+        return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+    }
+
+    function updateDisplay() {
+        chronoDisplay.textContent = formatTime(elapsedTime);
+    }
+
+    function startChrono() {
+        if (!isRunning) {
+            startTime = Date.now() - elapsedTime;
+            interval = setInterval(() => {
+                elapsedTime = Date.now() - startTime;
+                updateDisplay();
+            }, 10);
+            isRunning = true;
+        }
+    }
+
+    function pauseChrono() {
+        if (isRunning) {
+            clearInterval(interval);
+            isRunning = false;
+        }
+    }
+
+    function resetChrono() {
+        pauseChrono();
+        elapsedTime = 0;
+        isReset = true;
+        updateDisplay();
+    }
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    document.addEventListener("click", () => {
+        if (isReset) {
+            isReset = false;
+            return;
+        }
+        isRunning ? pauseChrono() : startChrono();
+    });
+
+    document.addEventListener("dblclick", toggleFullscreen);
+
+    document.addEventListener("mousedown", () => {
+        holdTimeout = setTimeout(() => {
+            resetChrono();
+        }, 250);
+    });
+
+    document.addEventListener("mouseup", () => {
+        if (holdTimeout) {
+            clearTimeout(holdTimeout);
+            holdTimeout = null;
+        }
+    });
+</script>
+</body>
+</html>
