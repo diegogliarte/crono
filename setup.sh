@@ -21,10 +21,9 @@ else
   echo "index.html already exists in $PROJECT_DIR"
 fi
 
-# Create the service file
-if [ ! -f "$SERVICE_FILE" ]; then
-  echo "Creating service file at $SERVICE_FILE"
-  sudo bash -c "cat > $SERVICE_FILE" <<EOL
+# Create or modify the service file
+echo "Ensuring service file exists and is up-to-date at $SERVICE_FILE"
+sudo bash -c "cat > $SERVICE_FILE" <<EOL
 [Unit]
 Description=Crono Web Server
 After=network.target
@@ -38,15 +37,12 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 EOL
-else
-  echo "Service file already exists: $SERVICE_FILE"
-fi
 
 # Reload systemd, enable and start the service
 echo "Reloading systemd and enabling the service"
 sudo systemctl daemon-reload
 sudo systemctl enable ${SERVICE_NAME}.service
-sudo systemctl start ${SERVICE_NAME}.service
+sudo systemctl restart ${SERVICE_NAME}.service
 
 # Display service status
 echo "Service status:"
