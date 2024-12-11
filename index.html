@@ -19,7 +19,7 @@
             margin: 0;
             font-family: 'clockicons', Arial, sans-serif;
             cursor: pointer;
-            background: #1e1e2f;
+            background: #111;
         }
 
         #chrono {
@@ -30,7 +30,7 @@
     </style>
 </head>
 <body>
-<div id="chrono">00:00:00.000</div>
+<div id="chrono">00:00:00</div>
 
 <script>
     let startTime = 0;
@@ -48,8 +48,7 @@
         const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
         const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
         const seconds = String(totalSeconds % 60).padStart(2, "0");
-        const milliseconds = String(ms % 1000).padStart(3, "0");
-        return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+        return `${hours}:${minutes}:${seconds}`;
     }
 
     function updateDisplay() {

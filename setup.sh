@@ -29,7 +29,6 @@ Description=Crono Web Server
 After=network.target
 
 [Service]
-User=pi
 WorkingDirectory=$PROJECT_DIR
 ExecStart=$PYTHON_PATH -m http.server $PORT
 Restart=always
